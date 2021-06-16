@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
 import java.sql.SQLOutput;
+import java.time.Duration;
 
 public class FluxAndMonoSampleTest {
 
@@ -55,7 +56,7 @@ public class FluxAndMonoSampleTest {
     }
 
     @Test
-    public void testFluxCompleteMessage() {
+    public void testFluxCompleteMessage() throws InterruptedException {
         Flux<String> messageFlux = Flux.just("I", "Love", "You", "Baby", ":)")
                 .log();
 
@@ -64,5 +65,20 @@ public class FluxAndMonoSampleTest {
                 (e) -> System.out.println("Error occured: "+e.getMessage()),
                 () -> System.out.println("Flux completed succesfully.")
         );
+    }
+
+    @Test
+    public void testFluxCompleteMessageWithDelay() throws InterruptedException {
+        Flux<String> messageFlux = Flux.just("I", "Love", "You", "Baby", ":)")
+                .delayElements(Duration.ofSeconds(1))
+                .log();
+
+        messageFlux.subscribe(
+                System.out::println,
+                (e) -> System.out.println("Error occured: "+e.getMessage()),
+                () -> System.out.println("Flux completed succesfully.")
+        );
+
+        Thread.sleep(10000);
     }
 }
